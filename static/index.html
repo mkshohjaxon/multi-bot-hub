@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>👑 MEGA AUTOMATION HUB — 3-in-1 Control Center</title>
+  <!-- Tailwind CSS & Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              emerald: '#10b981',
+              indigo: '#6366f1',
+              cyan: '#0284c7',
+              dark: '#090d16',
+              surface: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    .panel-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #090d16;
+    }
+    .active-nav-btn {
+      background: rgba(30, 41, 59, 0.9) !important;
+      border-color: #38bdf8 !important;
+      color: #38bdf8 !important;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-[#070b12] text-slate-100 min-h-screen flex flex-col font-sans antialiased overflow-hidden select-none">
+
+  <!-- ============================================================== -->
+  <!-- 1. TOP HEADER & TELEMETRY NAV -->
+  <!-- ============================================================== -->
+  <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md px-4 py-2.5 z-50 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+    
+    <!-- Logo & Title -->
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-emerald-400 p-[2px] shadow-lg shadow-cyan-500/20">
+        <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-xl">
+          ⚡
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-black text-sm sm:text-base tracking-wide bg-gradient-to-r from-cyan-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">
+            MEGA AUTOMATION HUB
+          </h1>
+          <span class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono font-bold tracking-wider">
+            PORT: 7777
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400 flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Barcha 3 tizim integratsiyalashgan</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Layout Mode Switcher Tabs -->
+    <div class="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+      <!-- 3 Tasi Bir Ekranda (Tri-View) -->
+      <button id="btn-mode-tri" onclick="setLayout('tri')" 
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition duration-150 border border-transparent hover:text-white text-slate-300 active-nav-btn">
+        <i class="fa-solid fa-table-columns text-cyan-400"></i>
+        <span>3 Tasi Ekranda (Tri-View)</span>
+        <span class="hidden md:inline text-[9px] bg-slate-800 text-slate-400 px-1 py-0.2 rounded font-mono">[1]</span>
+      </button>
+
+      <!-- UzChess Only -->
+      <button id="btn-mode-uzchess" onclick="setLayout('uzchess')" 
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition duration-150 border border-transparent hover:text-white text-slate-400 hover:bg-slate-900">
+        <span class="text-emerald-400">♟️</span>
+        <span>UzChess</span>
+        <span class="hidden md:inline text-[9px] bg-slate-800 text-slate-400 px-1 py-0.2 rounded font-mono">[2]</span>
+      </button>
+
+      <!-- IF-Online Only -->
+      <button id="btn-mode-ifonline" onclick="setLayout('ifonline')" 
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition duration-150 border border-transparent hover:text-white text-slate-400 hover:bg-slate-900">
+        <span class="text-indigo-400">🤖</span>
+        <span>IF-Online</span>
+        <span class="hidden md:inline text-[9px] bg-slate-800 text-slate-400 px-1 py-0.2 rounded font-mono">[3]</span>
+      </button>
+
+      <!-- Ibrat Academy Only -->
+      <button id="btn-mode-ibrat" onclick="setLayout('ibrat')" 
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition duration-150 border border-transparent hover:text-white text-slate-400 hover:bg-slate-900">
+        <span class="text-sky-400">🎓</span>
+        <span>Ibrat Academy</span>
+        <span class="hidden md:inline text-[9px] bg-slate-800 text-slate-400 px-1 py-0.2 rounded font-mono">[4]</span>
+      </button>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex items-center gap-2">
+      <button onclick="refreshAll()" title="Barcha panellarni va ma'lumotlarni yangilash"
+        class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow">
+        <i class="fa-solid fa-rotate text-cyan-400 text-xs"></i>
+        <span class="hidden sm:inline">Yangilash</span>
+      </button>
+
+      <button onclick="stopAll()" title="Barcha bot jarayonlarini darhol to'xtatish"
+        class="flex items-center gap-1.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow">
+        <i class="fa-solid fa-power-off text-rose-400 text-xs"></i>
+        <span class="hidden sm:inline">To'xtatish</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- 2. GLOBAL TELEMETRY BAR (REAL-TIME STATS) -->
+  <!-- ============================================================== -->
+  <div class="bg-slate-950/70 border-b border-slate-800/80 px-4 py-1.5 flex flex-wrap items-center justify-between text-xs gap-3 text-slate-300">
+    <div class="flex flex-wrap items-center gap-4">
+      
+      <!-- UzChess Pill -->
+      <div class="flex items-center gap-2 bg-emerald-950/40 border border-emerald-800/50 px-2.5 py-1 rounded-md text-[11px]">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="font-bold text-emerald-400">UzChess:</span>
+        <span id="stat-uzchess-sessions" class="font-mono text-white">0</span> <span class="text-slate-400">sessiya</span>
+        <span class="text-slate-600">|</span>
+        <span id="stat-uzchess-reg" class="font-mono text-emerald-300 font-bold">0</span> <span class="text-slate-400">ro'yxat</span>
+        <span id="badge-uzchess-running" class="ml-1 px-1.5 py-0.2 rounded text-[10px] font-mono hidden bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">FAOL</span>
+      </div>
+
+      <!-- IF-Online Pill -->
+      <div class="flex items-center gap-2 bg-indigo-950/40 border border-indigo-800/50 px-2.5 py-1 rounded-md text-[11px]">
+        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+        <span class="font-bold text-indigo-400">IF-Online:</span>
+        <span id="stat-ifonline-sessions" class="font-mono text-white">0</span> <span class="text-slate-400">sessiya</span>
+        <span class="text-slate-600">|</span>
+        <span id="stat-ifonline-reg" class="font-mono text-indigo-300 font-bold">0</span> <span class="text-slate-400">ro'yxat</span>
+        <span id="badge-ifonline-running" class="ml-1 px-1.5 py-0.2 rounded text-[10px] font-mono hidden bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">FAOL</span>
+      </div>
+
+      <!-- Ibrat Pill -->
+      <div class="flex items-center gap-2 bg-sky-950/40 border border-sky-800/50 px-2.5 py-1 rounded-md text-[11px]">
+        <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+        <span class="font-bold text-sky-400">Ibrat:</span>
+        <span id="stat-ibrat-pool" class="font-mono text-white">0</span> <span class="text-slate-400">ombor</span>
+        <span class="text-slate-600">|</span>
+        <span id="stat-ibrat-success" class="font-mono text-sky-300 font-bold">0</span> <span class="text-slate-400">muvaffaqiyat</span>
+        <span id="badge-ibrat-running" class="ml-1 px-1.5 py-0.2 rounded text-[10px] font-mono hidden bg-sky-500/20 text-sky-300 border border-sky-500/30">FAOL</span>
+      </div>
+
+    </div>
+
+    <!-- Live Telemetry Status -->
+    <div class="flex items-center gap-3 text-[11px] text-slate-400 font-mono">
+      <span>Auto-Sync: <span class="text-emerald-400 font-bold">Har 4 soniyada</span></span>
+      <span class="text-slate-600">|</span>
+      <span id="clock" class="text-slate-300">00:00:00</span>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 3. MAIN WORKSPACE: TRI-VIEW OR SINGLE FOCUS -->
+  <!-- ============================================================== -->
+  <main id="workspace" class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-1 p-1 bg-black/40 overflow-hidden">
+    
+    <!-- ==================== PANEL 1: UZCHESS ==================== -->
+    <section id="panel-uzchess" class="flex flex-col bg-slate-900 border border-slate-800/80 rounded-lg overflow-hidden shadow-2xl relative transition-all duration-200">
+      <header class="bg-slate-950 px-3 py-1.5 border-b border-slate-800/80 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">♟️</span>
+          <span class="font-bold text-emerald-400 tracking-wide">UzChess Akademiya</span>
+          <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.2 rounded font-mono">v3.2</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="reloadFrame('frame-uzchess')" title="Qayta yuklash" class="text-slate-400 hover:text-white p-1">
+            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+          </button>
+          <button onclick="setLayout('uzchess')" title="To'liq ekranga yoyish" class="text-slate-400 hover:text-emerald-400 p-1">
+            <i class="fa-solid fa-expand text-[11px]"></i>
+          </button>
+        </div>
+      </header>
+      <div class="flex-1 relative overflow-hidden">
+        <iframe id="frame-uzchess" src="/view/uzchess" class="panel-frame"></iframe>
+      </div>
+    </section>
+
+    <!-- ==================== PANEL 2: IF-ONLINE ==================== -->
+    <section id="panel-ifonline" class="flex flex-col bg-slate-900 border border-slate-800/80 rounded-lg overflow-hidden shadow-2xl relative transition-all duration-200">
+      <header class="bg-slate-950 px-3 py-1.5 border-b border-slate-800/80 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">🤖</span>
+          <span class="font-bold text-indigo-400 tracking-wide">IF-Online Bot</span>
+          <span class="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-1.5 py-0.2 rounded font-mono">@ifonlineBot</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="reloadFrame('frame-ifonline')" title="Qayta yuklash" class="text-slate-400 hover:text-white p-1">
+            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+          </button>
+          <button onclick="setLayout('ifonline')" title="To'liq ekranga yoyish" class="text-slate-400 hover:text-indigo-400 p-1">
+            <i class="fa-solid fa-expand text-[11px]"></i>
+          </button>
+        </div>
+      </header>
+      <div class="flex-1 relative overflow-hidden">
+        <iframe id="frame-ifonline" src="/view/ifonline" class="panel-frame"></iframe>
+      </div>
+    </section>
+
+    <!-- ==================== PANEL 3: IBRAT ACADEMY ==================== -->
+    <section id="panel-ibrat" class="flex flex-col bg-slate-900 border border-slate-800/80 rounded-lg overflow-hidden shadow-2xl relative transition-all duration-200">
+      <header class="bg-slate-950 px-3 py-1.5 border-b border-slate-800/80 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">🎓</span>
+          <span class="font-bold text-sky-400 tracking-wide">Ibrat Academy</span>
+          <span class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-1.5 py-0.2 rounded font-mono">100k+ Hub</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="reloadFrame('frame-ibrat')" title="Qayta yuklash" class="text-slate-400 hover:text-white p-1">
+            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+          </button>
+          <button onclick="setLayout('ibrat')" title="To'liq ekranga yoyish" class="text-slate-400 hover:text-sky-400 p-1">
+            <i class="fa-solid fa-expand text-[11px]"></i>
+          </button>
+        </div>
+      </header>
+      <div class="flex-1 relative overflow-hidden">
+        <iframe id="frame-ibrat" src="/view/ibrat" class="panel-frame"></iframe>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- 4. CONTROLLER SCRIPT -->
+  <!-- ============================================================== -->
+  <script>
+    let currentLayout = 'tri';
+    const workspace = document.getElementById('workspace');
+    const panelUzchess = document.getElementById('panel-uzchess');
+    const panelIfonline = document.getElementById('panel-ifonline');
+    const panelIbrat = document.getElementById('panel-ibrat');
+
+    const btnTri = document.getElementById('btn-mode-tri');
+    const btnUzchess = document.getElementById('btn-mode-uzchess');
+    const btnIfonline = document.getElementById('btn-mode-ifonline');
+    const btnIbrat = document.getElementById('btn-mode-ibrat');
+
+    function setLayout(mode) {
+      currentLayout = mode;
+      window.location.hash = mode;
+
+      [btnTri, btnUzchess, btnIfonline, btnIbrat].forEach(b => b.classList.remove('active-nav-btn'));
+
+      if (mode === 'tri') {
+        btnTri.classList.add('active-nav-btn');
+        workspace.className = "flex-1 grid grid-cols-1 lg:grid-cols-3 gap-1 p-1 bg-black/40 overflow-hidden";
+        panelUzchess.classList.remove('hidden');
+        panelIfonline.classList.remove('hidden');
+        panelIbrat.classList.remove('hidden');
+      } else if (mode === 'uzchess') {
+        btnUzchess.classList.add('active-nav-btn');
+        workspace.className = "flex-1 grid grid-cols-1 gap-1 p-1 bg-black/40 overflow-hidden";
+        panelUzchess.classList.remove('hidden');
+        panelIfonline.classList.add('hidden');
+        panelIbrat.classList.add('hidden');
+      } else if (mode === 'ifonline') {
+        btnIfonline.classList.add('active-nav-btn');
+        workspace.className = "flex-1 grid grid-cols-1 gap-1 p-1 bg-black/40 overflow-hidden";
+        panelUzchess.classList.add('hidden');
+        panelIfonline.classList.remove('hidden');
+        panelIbrat.classList.add('hidden');
+      } else if (mode === 'ibrat') {
+        btnIbrat.classList.add('active-nav-btn');
+        workspace.className = "flex-1 grid grid-cols-1 gap-1 p-1 bg-black/40 overflow-hidden";
+        panelUzchess.classList.add('hidden');
+        panelIfonline.classList.add('hidden');
+        panelIbrat.classList.remove('hidden');
+      }
+    }
+
+    function reloadFrame(frameId) {
+      const f = document.getElementById(frameId);
+      if (f) f.src = f.src;
+    }
+
+    function refreshAll() {
+      reloadFrame('frame-uzchess');
+      reloadFrame('frame-ifonline');
+      reloadFrame('frame-ibrat');
+      fetchTelemetry();
+    }
+
+    async function stopAll() {
+      if (!confirm("Diqqat! Barcha 3 tizim jarayonlarini to'xtatmoqchimisiz?")) return;
+      try {
+        const res = await fetch('/api/hub/stop-all', { method: 'POST' });
+        const d = await res.json();
+        alert("Barcha tizimlarga to'xtatish signali yuborildi!");
+        fetchTelemetry();
+      } catch (e) {
+        alert("Xatolik: " + e);
+      }
+    }
+
+    async function fetchTelemetry() {
+      try {
+        const res = await fetch('/api/hub/stats');
+        const data = await res.json();
+        
+        // UzChess
+        if (data.uzchess) {
+          document.getElementById('stat-uzchess-sessions').innerText = data.uzchess.sessions || 0;
+          document.getElementById('stat-uzchess-reg').innerText = data.uzchess.registered || 0;
+          const bU = document.getElementById('badge-uzchess-running');
+          if (data.uzchess.is_running) bU.classList.remove('hidden'); else bU.classList.add('hidden');
+        }
+
+        // IF-Online
+        if (data.ifonline) {
+          document.getElementById('stat-ifonline-sessions').innerText = data.ifonline.sessions || 0;
+          document.getElementById('stat-ifonline-reg').innerText = data.ifonline.registered || 0;
+          const bIf = document.getElementById('badge-ifonline-running');
+          if (data.ifonline.is_running) bIf.classList.remove('hidden'); else bIf.classList.add('hidden');
+        }
+
+        // Ibrat
+        if (data.ibrat) {
+          document.getElementById('stat-ibrat-pool').innerText = data.ibrat.pool_available || data.ibrat.total || 0;
+          document.getElementById('stat-ibrat-success').innerText = data.ibrat.success || 0;
+          const bIb = document.getElementById('badge-ibrat-running');
+          if (data.ibrat.is_running) bIb.classList.remove('hidden'); else bIb.classList.add('hidden');
+        }
+      } catch (e) {
+        console.warn("Telemetry fetch error:", e);
+      }
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === '1') setLayout('tri');
+      if (e.key === '2') setLayout('uzchess');
+      if (e.key === '3') setLayout('ifonline');
+      if (e.key === '4') setLayout('ibrat');
+      if (e.key === 'r' && e.ctrlKey) { e.preventDefault(); refreshAll(); }
+    });
+
+    // Clock
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('clock').innerText = now.toTimeString().split(' ')[0];
+    }, 1000);
+
+    // Initial Telemetry Polling
+    fetchTelemetry();
+    setInterval(fetchTelemetry, 4000);
+
+    // Check URL Hash on Load
+    const hash = window.location.hash.replace('#', '');
+    if (['tri', 'uzchess', 'ifonline', 'ibrat'].includes(hash)) {
+      setLayout(hash);
+    }
+  </script>
+</body>
+</html>
