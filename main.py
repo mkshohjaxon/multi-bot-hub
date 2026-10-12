@@ -212,15 +212,14 @@ async def proxy_static(path: str, request: Request):
 # 4. DISPATCHING API PROXIES (UZCHESS, IF-ONLINE, IBRAT)
 # ==============================================================================
 
-# API Status: Referer or query based dispatch
-@app.get("/api/status")
-async def proxy_status(request: Request):
-    referer = request.headers.get("referer", "")
-    host = request.headers.get("host", "")
-    service = request.query_params.get("service", "")
-    if "ibrat" in referer or host.startswith("ibrat") or service == "ibrat":
-        return await forward_request(f"{IBRAT_BACKEND}/api/status", request)
-    return await forward_request(f"{UZCHESS_BACKEND}/api/status", request)
+# Explicit Dedicated Routes to isolate each bot's telemetry & logs
+@app.api_route("/api/uzchess/{path:path}", methods=["GET", "POST", "DELETE", "PUT"])
+async def proxy_uzchess_explicit(path: str, request: Request):
+    return await forward_request(f"{UZCHESS_BACKEND}/api/{path}", request)
+
+@app.api_route("/api/ibrat/{path:path}", methods=["GET", "POST", "DELETE", "PUT"])
+async def proxy_ibrat_explicit(path: str, request: Request):
+    return await forward_request(f"{IBRAT_BACKEND}/api/{path}", request)
 
 # IF-Online APIs
 @app.api_route("/api/ifonline/{path:path}", methods=["GET", "POST", "DELETE", "PUT"])
