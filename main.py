@@ -8,9 +8,9 @@ from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-PORT = int(os.environ.get("PORT", "7777"))
+PORT = int(os.environ.get("PORT", "8010"))
 UZCHESS_BACKEND = "http://127.0.0.1:7878"
-IBRAT_BACKEND = "http://127.0.0.1:8010"
+IBRAT_BACKEND = "http://127.0.0.1:8015"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
