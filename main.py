@@ -8,9 +8,15 @@ from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
+if sys.platform == "win32":
+    try:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    except Exception:
+        pass
+
 PORT = int(os.environ.get("PORT", "8010"))
-UZCHESS_BACKEND = "http://127.0.0.1:7878"
-IBRAT_BACKEND = "http://127.0.0.1:8015"
+UZCHESS_BACKEND = os.environ.get("UZCHESS_BACKEND", "http://127.0.0.1:7878").rstrip("/")
+IBRAT_BACKEND = os.environ.get("IBRAT_BACKEND", "http://127.0.0.1:8015").rstrip("/")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -62,6 +68,36 @@ async def forward_request(target_url: str, request: Request) -> Response:
             media_type=resp.headers.get("content-type")
         )
     except Exception as e:
+        is_html = "text/html" in request.headers.get("accept", "") or request.url.path.startswith("/view/")
+        if is_html:
+            bot_name = "UzChess & IF-Online (Port 7878)" if "7878" in target_url else "Ibrat Academy (Port 8015)"
+            html_err = f"""<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #090d16; color: #f1f5f9; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }}
+  .card {{ background: #0f172a; border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 26px; max-width: 440px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }}
+  .icon {{ font-size: 40px; margin-bottom: 12px; }}
+  h3 {{ margin: 0 0 8px; font-size: 17px; color: #f87171; }}
+  p {{ margin: 0 0 16px; font-size: 13px; color: #94a3b8; line-height: 1.5; }}
+  .badge {{ display: inline-block; padding: 4px 12px; background: rgba(239,68,68,0.15); color: #fca5a5; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 14px; }}
+  .btn {{ background: #0284c7; color: #fff; border: none; padding: 9px 18px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }}
+  .btn:hover {{ background: #0369a1; }}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">🔌</div>
+  <h3>Botga ulanib bo'lmadi</h3>
+  <div class="badge">{bot_name}</div>
+  <p>Ushbu bot xizmati hozircha ishga tushirilmagan yoki port band. Botni kompyuteringizda yoki serverda ishga tushiring.</p>
+  <button class="btn" onclick="location.reload()">🔄 Qayta tekshirish</button>
+</div>
+</body>
+</html>"""
+            return HTMLResponse(html_err, status_code=502)
         return JSONResponse({"ok": False, "error": f"Backend aloqa xatoligi: {str(e)}"}, status_code=502)
 
 

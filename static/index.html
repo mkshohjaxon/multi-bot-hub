@@ -256,8 +256,13 @@
   <script>
     function goToTGManager() {
       const host = window.location.hostname || "127.0.0.1";
-      const url = `${window.location.protocol}//${host}:8009/tgm/`;
-      window.open(url, "_blank") || (window.location.href = url);
+      if (host === "127.0.0.1" || host === "localhost") {
+        const url = `http://${host}:8009/tgm/`;
+        window.open(url, "_blank") || (window.location.href = url);
+      } else {
+        const url = "https://app.topen.uz/tgm/";
+        window.open(url, "_blank") || (window.location.href = url);
+      }
     }
     let currentLayout = 'tri';
     const workspace = document.getElementById('workspace');
