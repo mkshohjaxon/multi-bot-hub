@@ -172,7 +172,7 @@ async def hub_stop_all():
         results["ifonline"] = False
 
     try:
-        r3 = await http_client.post(f"{IBRAT_BACKEND}/api/reset", timeout=5.0)
+        r3 = await http_client.post(f"{IBRAT_BACKEND}/api/stop", timeout=5.0)
         results["ibrat"] = r3.status_code == 200
     except Exception as e:
         results["ibrat"] = False

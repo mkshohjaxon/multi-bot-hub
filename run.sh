@@ -1,14 +1,15 @@
 #!/bin/bash
-set -e
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
 
-PYTHON_BIN="/home/shohjaxon/tg-account-manager/venv/bin/python"
-PORT=8010
+if [ -f "$DIR/venv/bin/python3" ]; then
+    PY="$DIR/venv/bin/python3"
+elif [ -f "/home/shohjaxon/tg-account-manager/venv/bin/python" ]; then
+    PY="/home/shohjaxon/tg-account-manager/venv/bin/python"
+elif command -v python3 &>/dev/null; then
+    PY="python3"
+else
+    PY="python"
+fi
 
-echo "=========================================================="
-echo "🚀 Starting MEGA AUTOMATION HUB on Port $PORT..."
-echo "=========================================================="
-
-exec "$PYTHON_BIN" main.py
+exec "$PY" "$DIR/run.py" "$@"
